@@ -37,6 +37,31 @@ function render(){
   document.querySelector("#balanceCents").textContent="."+(parts[1]||"00");
   document.querySelector("#creditsValue").textContent=money(credits).replace("MYR","RM");
   document.querySelector("#debitsValue").textContent=money(debits).replace("MYR","RM");
+  renderSnapshot(credits,debits,balance);
+}
+function renderSnapshot(credits,debits,balance){
+  const fmt=n=>money(n).replace("MYR","RM");
+  const months=[["2026-09","Sep"],["2026-10","Oct"],["2026-11","Nov"]];
+  const monthly=months.map(([key,label])=>{
+    const entries=transactions.filter(t=>t.date.startsWith(key));
+    const incoming=entries.filter(t=>t.type==="credit").reduce((s,t)=>s+t.amount,0);
+    const outgoing=entries.filter(t=>t.type==="debit").reduce((s,t)=>s+t.amount,0);
+    return {label,incoming,outgoing,net:incoming-outgoing,count:entries.length};
+  });
+  const max=Math.max(1,...monthly.flatMap(m=>[m.incoming,m.outgoing]));
+  document.querySelector("#snapshotNet").textContent=fmt(balance-openingBalance);
+  document.querySelector("#snapshotCount").textContent=transactions.length;
+  document.querySelector("#snapshotOpening").textContent=fmt(openingBalance);
+  document.querySelector("#snapshotCredits").textContent=fmt(credits);
+  document.querySelector("#snapshotDebits").textContent=fmt(debits);
+  document.querySelector("#snapshotClosing").textContent=fmt(balance);
+  const largestCredit=transactions.filter(t=>t.type==="credit").reduce((a,t)=>!a||t.amount>a.amount?t:a,null);
+  const largestDebit=transactions.filter(t=>t.type==="debit").reduce((a,t)=>!a||t.amount>a.amount?t:a,null);
+  document.querySelector("#snapshotLargestCredit").textContent=largestCredit?fmt(largestCredit.amount):fmt(0);
+  document.querySelector("#snapshotLargestDebit").textContent=largestDebit?fmt(largestDebit.amount):fmt(0);
+  document.querySelector("#snapshotBars").innerHTML=monthly.map(m=>`<div class="bar-group"><i class="bar income" style="height:${m.incoming/max*100}%" title="Credits: ${fmt(m.incoming)}"></i><i class="bar expense" style="height:${m.outgoing/max*100}%" title="Debits: ${fmt(m.outgoing)}"></i></div>`).join("");
+  document.querySelector("#snapshotMonths").innerHTML=monthly.map(m=>`<span>${m.label}</span>`).join("");
+  document.querySelector("#monthlyRows").innerHTML=monthly.map(m=>`<div class="monthly-row"><span>${m.label} <small>${m.count} entries</small></span><b class="monthly-credit">${fmt(m.incoming)}</b><b class="monthly-debit">${fmt(m.outgoing)}</b><b class="monthly-net">${fmt(m.net)}</b></div>`).join("");
 }
 function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 document.querySelector("#searchInput").addEventListener("input",render);
