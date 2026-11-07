@@ -5,7 +5,9 @@ const seedTransactions = [
   {id:4,description:"Office and utilities",date:"2026-11-01",reference:"QC-DR-2603",type:"debit",amount:3204.02},
   {id:5,description:"Support contract renewal",date:"2026-10-29",reference:"QC-CR-2602",type:"credit",amount:50000}
 ];
-const initialBalance = 415055.98;
+const currentBalanceBaseline = 415055.98;
+const seedNetMovement = seedTransactions.reduce((sum,t)=>sum+(t.type==="credit"?t.amount:-t.amount),0);
+const openingBalance = currentBalanceBaseline - seedNetMovement;
 const storageKey = "quark-ledger-entries-v1";
 let transactions = loadEntries();
 const money = n => new Intl.NumberFormat("en-MY",{style:"currency",currency:"MYR"}).format(n);
@@ -21,6 +23,8 @@ function render(){
   document.querySelector("#entryCount").textContent=`Showing ${visible.length} of ${transactions.length} entries`;
   const credits=transactions.filter(t=>t.type==="credit").reduce((s,t)=>s+t.amount,0);
   const debits=transactions.filter(t=>t.type==="debit").reduce((s,t)=>s+t.amount,0);
+  const balance=openingBalance+credits-debits;
+  document.querySelector("#availableBalance").textContent=money(balance).replace("MYR","RM");
   document.querySelector("#creditsValue").textContent=money(credits).replace("MYR","RM");
   document.querySelector("#debitsValue").textContent=money(debits).replace("MYR","RM");
 }
