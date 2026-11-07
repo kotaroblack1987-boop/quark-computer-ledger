@@ -1,7 +1,7 @@
 {
-  "name": "Quark Computer Ledger Demo",
+  "name": "Quark Computer Ledger",
   "short_name": "Quark Ledger",
-  "description": "Demonstration company ledger dashboard for Quark Computer.",
+  "description": "Company ledger dashboard for Quark Computer.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
