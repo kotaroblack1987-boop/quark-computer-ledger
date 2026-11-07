@@ -36,3 +36,34 @@
 .activity-panel .table-wrap{width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
 .activity-panel table{min-width:680px;width:100%;white-space:nowrap}
 @media(max-width:700px){.activity-panel .table-wrap{margin:0;max-width:100%;overflow-x:auto}.activity-panel table{min-width:680px}.activity-panel{overflow:visible}}
+
+
+/* Lock the viewport: scrolling is confined to the transaction table viewport. */
+html,body{height:100%;height:100dvh;overflow:hidden}
+.app-shell{height:100%;height:100dvh;min-height:0;overflow:hidden}
+.main-content{height:100%;height:100dvh;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.topbar,.page-heading,.summary-grid,footer{flex-shrink:0}
+.content-grid{flex:1 1 auto;min-height:0;overflow:hidden}
+.activity-panel{display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.activity-panel .filters{flex-shrink:0}
+.activity-panel .table-wrap{flex:1 1 auto;min-height:120px;max-height:none;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.activity-panel table{min-width:680px}
+.activity-panel .table-footer{flex-shrink:0}
+.insight-panel{min-height:0;overflow:hidden}
+@media(max-width:1100px){.content-grid{min-height:0}.activity-panel .table-wrap{min-height:140px}}
+@media(max-width:700px){
+  .main-content{padding:0 12px}
+  .summary-grid{margin:10px 0;gap:8px}
+  .balance-card{min-height:126px;padding:16px 18px}
+  .metric-card{min-height:108px;padding:13px}
+  .metric-value{margin-top:12px}
+  .content-grid{display:block;height:100%;min-height:0}
+  .activity-panel{height:100%;padding:12px}
+  .activity-panel .table-wrap{min-height:0}
+  .insight-panel{display:none}
+  .page-heading{padding:16px 0 10px}
+  .page-heading h1{font-size:20px}
+  .subheading{margin-top:5px}
+  .table-footer{padding-top:9px}
+  footer{padding:10px 0}
+}
