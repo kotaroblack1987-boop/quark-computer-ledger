@@ -1,29 +1,16 @@
 const seedTransactions = [
-  {id:1,description:"Enterprise hardware order",date:"2026-11-06",reference:"TEST-CR-261106",type:"credit",amount:120000},
-  {id:2,description:"Server equipment purchase",date:"2026-11-05",reference:"TEST-DR-261105",type:"debit",amount:18500},
-  {id:3,description:"Managed services contract",date:"2026-11-03",reference:"TEST-CR-261103",type:"credit",amount:85000},
-  {id:4,description:"Office lease and utilities",date:"2026-10-30",reference:"TEST-DR-261030",type:"debit",amount:12400},
-  {id:5,description:"Software licensing",date:"2026-10-27",reference:"TEST-CR-261027",type:"credit",amount:62500},
-  {id:6,description:"Network installation",date:"2026-10-23",reference:"TEST-DR-261023",type:"debit",amount:8990.50},
-  {id:7,description:"IT support retainer",date:"2026-10-19",reference:"TEST-CR-261019",type:"credit",amount:48000},
-  {id:8,description:"Equipment maintenance",date:"2026-10-15",reference:"TEST-DR-261015",type:"debit",amount:7200},
-  {id:9,description:"Cloud infrastructure services",date:"2026-10-12",reference:"TEST-CR-261012",type:"credit",amount:57000},
-  {id:10,description:"Computer peripherals",date:"2026-10-08",reference:"TEST-DR-261008",type:"debit",amount:6400},
-  {id:11,description:"Business systems project",date:"2026-09-29",reference:"TEST-CR-260929",type:"credit",amount:39500},
-  {id:12,description:"Logistics and delivery",date:"2026-09-25",reference:"TEST-DR-260925",type:"debit",amount:5200},
-  {id:13,description:"Annual support renewal",date:"2026-09-21",reference:"TEST-CR-260921",type:"credit",amount:36000},
-  {id:14,description:"Office operations",date:"2026-09-17",reference:"TEST-DR-260917",type:"debit",amount:4000},
-  {id:15,description:"Workstation supply",date:"2026-09-10",reference:"TEST-CR-260910",type:"credit",amount:32000},
-  {id:16,description:"Payment processing fees",date:"2026-09-04",reference:"TEST-DR-260904",type:"debit",amount:2253.52}
+  {id:1,description:"Client payment · Project Alpha",date:"2026-11-06",reference:"QC-CR-2606",type:"credit",amount:285000},
+  {id:2,description:"Hardware procurement",date:"2026-11-05",reference:"QC-DR-2605",type:"debit",amount:8240},
+  {id:3,description:"Managed services revenue",date:"2026-11-03",reference:"QC-CR-2604",type:"credit",amount:93500},
+  {id:4,description:"Office and utilities",date:"2026-11-01",reference:"QC-DR-2603",type:"debit",amount:3204.02},
+  {id:5,description:"Support contract renewal",date:"2026-10-29",reference:"QC-CR-2602",type:"credit",amount:50000}
 ];
-const currentBalanceBaseline = 415055.98;
-const seedNetMovement = seedTransactions.reduce((sum,t)=>sum+(t.type==="credit"?t.amount:-t.amount),0);
-const openingBalance = currentBalanceBaseline - seedNetMovement;
-const storageKey = "quark-ledger-entries-v2";
+const initialBalance = 415055.98;
+const storageKey = "quark-ledger-demo-entries-v1";
 let transactions = loadEntries();
 const money = n => new Intl.NumberFormat("en-MY",{style:"currency",currency:"MYR"}).format(n);
-const dateLabel = s => {const value=String(s).trim();let year,month,day;const iso=value.match(/^(\d{4})-(\d{2})-(\d{2})/);if(iso){year=Number(iso[1]);month=Number(iso[2]);day=Number(iso[3]);}else{const parsed=new Date(value);if(Number.isNaN(parsed.getTime()))return escapeHTML(value);year=parsed.getFullYear();month=parsed.getMonth()+1;day=parsed.getDate();}const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];return month>=1&&month<=12&&day>=1&&day<=31?`${String(day).padStart(2,"0")} ${months[month-1]} ${year}`:escapeHTML(value);};
-function loadEntries(){try{const saved=localStorage.getItem(storageKey);const entries=saved?JSON.parse(saved):seedTransactions;return entries.map(t=>({...t,description:String(t.description).replace(/^SAMPLE · /,"")}));}catch{return seedTransactions;}}
+const dateLabel = s => new Date(s+"T00:00:00").toLocaleDateString("en-MY",{day:"2-digit",month:"short",year:"numeric"});
+function loadEntries(){try{const saved=localStorage.getItem(storageKey);return saved?JSON.parse(saved):seedTransactions;}catch{return seedTransactions;}}
 function saveEntries(){try{localStorage.setItem(storageKey,JSON.stringify(transactions));}catch{}}
 function render(){
   const query=document.querySelector("#searchInput").value.trim().toLowerCase();
@@ -34,20 +21,26 @@ function render(){
   document.querySelector("#entryCount").textContent=`Showing ${visible.length} of ${transactions.length} entries`;
   const credits=transactions.filter(t=>t.type==="credit").reduce((s,t)=>s+t.amount,0);
   const debits=transactions.filter(t=>t.type==="debit").reduce((s,t)=>s+t.amount,0);
-  const balance=openingBalance+credits-debits;
-  const balanceParts=new Intl.NumberFormat("en-MY",{minimumFractionDigits:2,maximumFractionDigits:2}).format(balance).split(".");
-  document.querySelector("#balanceWhole").textContent=balanceParts[0];
-  document.querySelector("#balanceCents").textContent="."+(balanceParts[1]||"00");
   document.querySelector("#creditsValue").textContent=money(credits).replace("MYR","RM");
   document.querySelector("#debitsValue").textContent=money(debits).replace("MYR","RM");
 }
 function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+const dialog=document.querySelector("#entryDialog");
+document.querySelector("#addTransactionBtn").addEventListener("click",()=>{const f=document.querySelector("#entryForm");f.reset();f.elements.date.value=new Date().toISOString().slice(0,10);dialog.showModal();});
+document.querySelector("#closeDialog").addEventListener("click",()=>dialog.close());
+document.querySelector("#cancelDialog").addEventListener("click",()=>dialog.close());
+document.querySelector("#entryForm").addEventListener("submit",e=>{
+  e.preventDefault();const f=e.currentTarget;const data=new FormData(f);const amount=Number(data.get("amount"));
+  if(!Number.isFinite(amount)||amount<=0)return;
+  const type=data.get("type");transactions.push({id:Date.now(),description:data.get("description").trim(),date:data.get("date"),reference:"QC-"+(type==="credit"?"CR":"DR")+"-"+String(Date.now()).slice(-6),type,amount});
+  saveEntries();render();dialog.close();
+});
 document.querySelector("#searchInput").addEventListener("input",render);
 document.querySelector("#typeFilter").addEventListener("change",render);
 document.querySelector("#exportBtn").addEventListener("click",()=>{
   const rows=[["Description","Date","Reference","Type","Amount (MYR)"],...transactions.map(t=>[t.description,t.date,t.reference,t.type,t.amount])];
   const csv=rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
-  const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));const a=document.createElement("a");a.href=url;a.download="quark-computer-ledger.csv";a.click();URL.revokeObjectURL(url);
+  const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));const a=document.createElement("a");a.href=url;a.download="quark-computer-demo-ledger.csv";a.click();URL.revokeObjectURL(url);
 });
 document.querySelector("#year").textContent=new Date().getFullYear();
 render();
