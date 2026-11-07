@@ -30,3 +30,9 @@
   .chart-x{left:30px;right:0;bottom:0}
   .chart-x span{display:block;flex:1;min-width:0;text-align:center}
 }
+
+
+/* Preserve the original balance typography and keep the full transaction table horizontally scrollable. */
+.activity-panel .table-wrap{width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+.activity-panel table{min-width:680px;width:100%;white-space:nowrap}
+@media(max-width:700px){.activity-panel .table-wrap{margin:0;max-width:100%;overflow-x:auto}.activity-panel table{min-width:680px}.activity-panel{overflow:visible}}
