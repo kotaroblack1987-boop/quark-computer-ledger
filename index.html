@@ -32,7 +32,38 @@
           <div class="table-wrap"><table><thead><tr><th>DESCRIPTION</th><th>DATE</th><th>REFERENCE</th><th>TYPE</th><th class="amount-col">AMOUNT</th></tr></thead><tbody id="transactionRows"></tbody></table><div id="emptyState" class="empty-state" hidden>No matching transactions found.</div></div>
           <div class="table-footer"><span id="entryCount">Showing 5 entries</span><span>Currency: MYR</span></div>
         </article>
-        <aside class="panel insight-panel"><div class="panel-heading"><div><h2>Ledger snapshot</h2><p>Credits and debits overview</p></div><span class="spark-icon">⌁</span></div><div class="chart-wrap"><div class="chart-y"><span>RM 20k</span><span>RM 15k</span><span>RM 10k</span><span>RM 5k</span><span>RM 0</span></div><div class="chart" aria-label="Illustrative weekly cashflow chart"><div class="gridlines"><i></i><i></i><i></i><i></i><i></i></div><div class="bars"><div class="bar-group"><i class="bar income" style="height:55%"></i><i class="bar expense" style="height:18%"></i></div><div class="bar-group"><i class="bar income" style="height:78%"></i><i class="bar expense" style="height:25%"></i></div><div class="bar-group"><i class="bar income" style="height:46%"></i><i class="bar expense" style="height:14%"></i></div><div class="bar-group"><i class="bar income" style="height:88%"></i><i class="bar expense" style="height:32%"></i></div><div class="bar-group"><i class="bar income" style="height:68%"></i><i class="bar expense" style="height:21%"></i></div><div class="bar-group"><i class="bar income" style="height:95%"></i><i class="bar expense" style="height:28%"></i></div><div class="bar-group"><i class="bar income" style="height:62%"></i><i class="bar expense" style="height:17%"></i></div></div></div></div><div class="legend"><span><i class="legend-dot income-dot"></i> Credits</span><span><i class="legend-dot expense-dot"></i> Debits</span></div><div class="snapshot-divider"></div><div class="snapshot-row"><span>Ledger status</span><b><i class="online-dot"></i> Available</b></div><div class="snapshot-row"><span>Account currency</span><b>MYR · Ringgit</b></div><div class="snapshot-row"><span>Data storage</span><b>Local browser</b></div></aside>
+        <aside class="panel insight-panel">
+          <div class="panel-heading"><div><h2>Ledger snapshot</h2><p>September – November 2026</p></div><span class="spark-icon">⌁</span></div>
+          <div class="snapshot-period">
+            <div><span>NET MOVEMENT</span><strong id="snapshotNet">RM 415,055.98</strong></div>
+            <div><span>TRANSACTIONS</span><strong id="snapshotCount">16</strong></div>
+          </div>
+          <div class="chart-title">Monthly cashflow</div>
+          <div class="chart-wrap snapshot-chart">
+            <div class="chart-y"><span>Credits</span><span>Debits</span></div>
+            <div class="chart" aria-label="Monthly credits and debits from September to November 2026">
+              <div class="gridlines"><i></i><i></i><i></i><i></i></div>
+              <div class="bars" id="snapshotBars"></div>
+              <div class="chart-x" id="snapshotMonths"></div>
+            </div>
+          </div>
+          <div class="legend"><span><i class="legend-dot income-dot"></i> Credits</span><span><i class="legend-dot expense-dot"></i> Debits</span></div>
+          <div class="snapshot-section-title">Monthly breakdown</div>
+          <div class="monthly-breakdown">
+            <div class="monthly-head"><span>MONTH</span><span>CREDITS</span><span>DEBITS</span><span>NET</span></div>
+            <div id="monthlyRows"></div>
+          </div>
+          <div class="snapshot-divider"></div>
+          <div class="snapshot-row"><span>Opening balance</span><b id="snapshotOpening">RM 0.00</b></div>
+          <div class="snapshot-row"><span>Total credits</span><b id="snapshotCredits">RM 480,000.00</b></div>
+          <div class="snapshot-row"><span>Total debits</span><b id="snapshotDebits">RM 64,944.02</b></div>
+          <div class="snapshot-row"><span>Closing balance</span><b id="snapshotClosing">RM 415,055.98</b></div>
+          <div class="snapshot-divider"></div>
+          <div class="snapshot-row"><span>Largest credit</span><b id="snapshotLargestCredit">RM 120,000.00</b></div>
+          <div class="snapshot-row"><span>Largest debit</span><b id="snapshotLargestDebit">RM 18,500.00</b></div>
+          <div class="snapshot-row"><span>Account currency</span><b>MYR · Ringgit</b></div>
+          <div class="snapshot-row"><span>Data storage</span><b>Local browser</b></div>
+        </aside>
       </section>
       <footer>© <span id="year"></span> Quark Computer · Company ledger <span>Illustrative entries · Not synced in real time</span></footer>
     </main>
