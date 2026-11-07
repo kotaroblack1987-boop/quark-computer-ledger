@@ -9,7 +9,7 @@ const initialBalance = 415055.98;
 const storageKey = "quark-ledger-entries-v1";
 let transactions = loadEntries();
 const money = n => new Intl.NumberFormat("en-MY",{style:"currency",currency:"MYR"}).format(n);
-const dateLabel = s => {const match=String(s).match(/^(\d{4})-(\d{2})-(\d{2})$/);if(!match)return escapeHTML(s);const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];const month=months[Number(match[2])-1];return month?`${match[3]} ${month} ${match[1]}`:escapeHTML(s);};
+const dateLabel = s => {const value=String(s).trim();let year,month,day;const iso=value.match(/^(\d{4})-(\d{2})-(\d{2})/);if(iso){year=Number(iso[1]);month=Number(iso[2]);day=Number(iso[3]);}else{const parsed=new Date(value);if(Number.isNaN(parsed.getTime()))return escapeHTML(value);year=parsed.getFullYear();month=parsed.getMonth()+1;day=parsed.getDate();}const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];return month>=1&&month<=12&&day>=1&&day<=31?`${String(day).padStart(2,"0")} ${months[month-1]} ${year}`:escapeHTML(value);};
 function loadEntries(){try{const saved=localStorage.getItem(storageKey);return saved?JSON.parse(saved):seedTransactions;}catch{return seedTransactions;}}
 function saveEntries(){try{localStorage.setItem(storageKey,JSON.stringify(transactions));}catch{}}
 function render(){
