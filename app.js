@@ -16,7 +16,7 @@ function render(){
   const query=document.querySelector("#searchInput").value.trim().toLowerCase();
   const filter=document.querySelector("#typeFilter").value;
   const visible=transactions.filter(t=>(filter==="all"||t.type===filter)&&[t.description,t.reference,t.date].some(v=>v.toLowerCase().includes(query))).sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
-  document.querySelector("#transactionRows").innerHTML=visible.map(t=>`<tr><td>${escapeHTML(t.description)}</td><td>${dateLabel(t.date)}</td><td class="ref">${escapeHTML(t.reference)}</td><td><span class="type-tag ${t.type}">${t.type.toUpperCase()}</span></td><td class="amount ${t.type==="credit"?"positive":"negative"}">${t.type==="credit"?"+":"−"}${money(t.amount).replace("MYR","RM")}</td></tr>`).join("");
+  document.querySelector("#transactionRows").innerHTML=visible.map(t=>`<tr><td data-label="Description">${escapeHTML(t.description)}</td><td data-label="Date">${dateLabel(t.date)}</td><td class="ref" data-label="Reference">${escapeHTML(t.reference)}</td><td data-label="Type"><span class="type-tag ${t.type}">${t.type.toUpperCase()}</span></td><td class="amount ${t.type==="credit"?"positive":"negative"}" data-label="Amount">${t.type==="credit"?"+":"−"}${money(t.amount).replace("MYR","RM")}</td></tr>`).join("");
   document.querySelector("#emptyState").hidden=visible.length>0;
   document.querySelector("#entryCount").textContent=`Showing ${visible.length} of ${transactions.length} entries`;
   const credits=transactions.filter(t=>t.type==="credit").reduce((s,t)=>s+t.amount,0);
