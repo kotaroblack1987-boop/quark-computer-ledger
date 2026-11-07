@@ -68,4 +68,35 @@ html,body{height:100%;height:100dvh;overflow:hidden}
   footer{padding:10px 0}
 }
 
-@media(min-width:701px) and (max-width:1100px){.content-grid{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}.insight-panel{display:none}}
+
+
+/* Restore the original ledger snapshot chart while keeping scroll inside the table. */
+@media(min-width:1101px){
+  .content-grid{grid-template-columns:minmax(0,1.75fr) minmax(270px,.85fr)}
+  .insight-panel{display:block}
+}
+@media(min-width:701px) and (max-width:1100px){
+  .content-grid{grid-template-columns:minmax(0,1fr) minmax(250px,.85fr)}
+  .insight-panel{display:block}
+  .chart-wrap{height:160px}
+}
+@media(max-width:700px){
+  html,body{height:100%;height:100dvh;overflow:hidden}
+  .main-content{height:100%;height:100dvh;overflow:hidden}
+  .content-grid{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(190px,1.25fr) minmax(155px,.8fr);gap:8px;height:100%;min-height:0;overflow:hidden}
+  .activity-panel{height:auto;min-height:0;overflow:hidden}
+  .activity-panel .table-wrap{min-height:0;overflow:auto}
+  .activity-panel table{min-width:680px}
+  .insight-panel{display:block;min-height:0;overflow:hidden;padding:12px}
+  .insight-panel .panel-heading h2{font-size:12px}
+  .insight-panel .panel-heading p{margin-top:3px}
+  .insight-panel .chart-wrap{height:82px;margin-top:9px}
+  .insight-panel .chart-y{font-size:6px;padding-bottom:12px}
+  .insight-panel .chart-x{font-size:6px;left:27px}
+  .insight-panel .chart-x span::after{font-size:7px}
+  .insight-panel .legend{margin:5px 0 7px;font-size:8px}
+  .insight-panel .snapshot-divider{margin-bottom:5px}
+  .insight-panel .snapshot-row{margin:5px 0;font-size:8px}
+  .insight-panel .snapshot-row:nth-last-child(-n+2){display:none}
+  footer{padding:6px 0}
+}
