@@ -1,14 +1,25 @@
 const seedTransactions = [
-  {id:1,description:"Client payment · Project Alpha",date:"2026-11-06",reference:"QC-CR-2606",type:"credit",amount:285000},
-  {id:2,description:"Hardware procurement",date:"2026-11-05",reference:"QC-DR-2605",type:"debit",amount:8240},
-  {id:3,description:"Managed services revenue",date:"2026-11-03",reference:"QC-CR-2604",type:"credit",amount:93500},
-  {id:4,description:"Office and utilities",date:"2026-11-01",reference:"QC-DR-2603",type:"debit",amount:3204.02},
-  {id:5,description:"Support contract renewal",date:"2026-10-29",reference:"QC-CR-2602",type:"credit",amount:50000}
+  {id:1,description:"SIMULATED · Enterprise hardware order",date:"2026-11-06",reference:"TEST-CR-261106",type:"credit",amount:120000},
+  {id:2,description:"SIMULATED · Server equipment purchase",date:"2026-11-05",reference:"TEST-DR-261105",type:"debit",amount:18500},
+  {id:3,description:"SIMULATED · Managed services contract",date:"2026-11-03",reference:"TEST-CR-261103",type:"credit",amount:85000},
+  {id:4,description:"SIMULATED · Office lease and utilities",date:"2026-10-30",reference:"TEST-DR-261030",type:"debit",amount:12400},
+  {id:5,description:"SIMULATED · Software licensing",date:"2026-10-27",reference:"TEST-CR-261027",type:"credit",amount:62500},
+  {id:6,description:"SIMULATED · Network installation",date:"2026-10-23",reference:"TEST-DR-261023",type:"debit",amount:8990.50},
+  {id:7,description:"SIMULATED · IT support retainer",date:"2026-10-19",reference:"TEST-CR-261019",type:"credit",amount:48000},
+  {id:8,description:"SIMULATED · Equipment maintenance",date:"2026-10-15",reference:"TEST-DR-261015",type:"debit",amount:7200},
+  {id:9,description:"SIMULATED · Cloud infrastructure services",date:"2026-10-12",reference:"TEST-CR-261012",type:"credit",amount:57000},
+  {id:10,description:"SIMULATED · Computer peripherals",date:"2026-10-08",reference:"TEST-DR-261008",type:"debit",amount:6400},
+  {id:11,description:"SIMULATED · Business systems project",date:"2026-09-29",reference:"TEST-CR-260929",type:"credit",amount:39500},
+  {id:12,description:"SIMULATED · Logistics and delivery",date:"2026-09-25",reference:"TEST-DR-260925",type:"debit",amount:5200},
+  {id:13,description:"SIMULATED · Annual support renewal",date:"2026-09-21",reference:"TEST-CR-260921",type:"credit",amount:36000},
+  {id:14,description:"SIMULATED · Office operations",date:"2026-09-17",reference:"TEST-DR-260917",type:"debit",amount:4000},
+  {id:15,description:"SIMULATED · Workstation supply",date:"2026-09-10",reference:"TEST-CR-260910",type:"credit",amount:32000},
+  {id:16,description:"SIMULATED · Payment processing fees",date:"2026-09-04",reference:"TEST-DR-260904",type:"debit",amount:2253.52}
 ];
 const currentBalanceBaseline = 415055.98;
 const seedNetMovement = seedTransactions.reduce((sum,t)=>sum+(t.type==="credit"?t.amount:-t.amount),0);
 const openingBalance = currentBalanceBaseline - seedNetMovement;
-const storageKey = "quark-ledger-entries-v1";
+const storageKey = "quark-ledger-entries-v2";
 let transactions = loadEntries();
 const money = n => new Intl.NumberFormat("en-MY",{style:"currency",currency:"MYR"}).format(n);
 const dateLabel = s => {const value=String(s).trim();let year,month,day;const iso=value.match(/^(\d{4})-(\d{2})-(\d{2})/);if(iso){year=Number(iso[1]);month=Number(iso[2]);day=Number(iso[3]);}else{const parsed=new Date(value);if(Number.isNaN(parsed.getTime()))return escapeHTML(value);year=parsed.getFullYear();month=parsed.getMonth()+1;day=parsed.getDate();}const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];return month>=1&&month<=12&&day>=1&&day<=31?`${String(day).padStart(2,"0")} ${months[month-1]} ${year}`:escapeHTML(value);};
