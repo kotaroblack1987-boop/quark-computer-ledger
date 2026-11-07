@@ -9,7 +9,7 @@ const initialBalance = 415055.98;
 const storageKey = "quark-ledger-entries-v1";
 let transactions = loadEntries();
 const money = n => new Intl.NumberFormat("en-MY",{style:"currency",currency:"MYR"}).format(n);
-const dateLabel = s => new Date(s+"T00:00:00").toLocaleDateString("en-MY",{day:"2-digit",month:"short",year:"numeric"});
+const dateLabel = s => {const match=String(s).match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);if(!match)return escapeHTML(s);const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];const month=months[Number(match[2])-1];return month?`${match[3]} ${month} ${match[1]}`:escapeHTML(s);};
 function loadEntries(){try{const saved=localStorage.getItem(storageKey);return saved?JSON.parse(saved):seedTransactions;}catch{return seedTransactions;}}
 function saveEntries(){try{localStorage.setItem(storageKey,JSON.stringify(transactions));}catch{}}
 function render(){
