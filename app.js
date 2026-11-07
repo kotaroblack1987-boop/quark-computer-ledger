@@ -24,7 +24,9 @@ function render(){
   const credits=transactions.filter(t=>t.type==="credit").reduce((s,t)=>s+t.amount,0);
   const debits=transactions.filter(t=>t.type==="debit").reduce((s,t)=>s+t.amount,0);
   const balance=openingBalance+credits-debits;
-  document.querySelector("#availableBalance").textContent=money(balance).replace("MYR","RM");
+  const balanceParts=new Intl.NumberFormat("en-MY",{minimumFractionDigits:2,maximumFractionDigits:2}).format(balance).split(".");
+  document.querySelector("#balanceWhole").textContent=balanceParts[0];
+  document.querySelector("#balanceCents").textContent="."+(balanceParts[1]||"00");
   document.querySelector("#creditsValue").textContent=money(credits).replace("MYR","RM");
   document.querySelector("#debitsValue").textContent=money(debits).replace("MYR","RM");
 }
