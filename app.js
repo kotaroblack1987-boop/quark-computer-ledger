@@ -6,12 +6,9 @@ const seedTransactions = [
   {id:5,description:"Support contract renewal",date:"2026-10-29",reference:"QC-CR-2602",type:"credit",amount:50000}
 ];
 const initialBalance = 415055.98;
-const storageKey = "quark-ledger-entries-v1";
-let transactions = loadEntries();
+let transactions = seedTransactions;
 const money = n => new Intl.NumberFormat("en-MY",{style:"currency",currency:"MYR"}).format(n);
 const dateLabel = s => new Date(s+"T00:00:00").toLocaleDateString("en-MY",{day:"2-digit",month:"short",year:"numeric"});
-function loadEntries(){try{const saved=localStorage.getItem(storageKey);return saved?JSON.parse(saved):seedTransactions;}catch{return seedTransactions;}}
-function saveEntries(){try{localStorage.setItem(storageKey,JSON.stringify(transactions));}catch{}}
 function render(){
   const query=document.querySelector("#searchInput").value.trim().toLowerCase();
   const filter=document.querySelector("#typeFilter").value;
@@ -25,16 +22,6 @@ function render(){
   document.querySelector("#debitsValue").textContent=money(debits).replace("MYR","RM");
 }
 function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-const dialog=document.querySelector("#entryDialog");
-document.querySelector("#addTransactionBtn").addEventListener("click",()=>{const f=document.querySelector("#entryForm");f.reset();f.elements.date.value=new Date().toISOString().slice(0,10);dialog.showModal();});
-document.querySelector("#closeDialog").addEventListener("click",()=>dialog.close());
-document.querySelector("#cancelDialog").addEventListener("click",()=>dialog.close());
-document.querySelector("#entryForm").addEventListener("submit",e=>{
-  e.preventDefault();const f=e.currentTarget;const data=new FormData(f);const amount=Number(data.get("amount"));
-  if(!Number.isFinite(amount)||amount<=0)return;
-  const type=data.get("type");transactions.push({id:Date.now(),description:data.get("description").trim(),date:data.get("date"),reference:"QC-"+(type==="credit"?"CR":"DR")+"-"+String(Date.now()).slice(-6),type,amount});
-  saveEntries();render();dialog.close();
-});
 document.querySelector("#searchInput").addEventListener("input",render);
 document.querySelector("#typeFilter").addEventListener("change",render);
 document.querySelector("#exportBtn").addEventListener("click",()=>{
