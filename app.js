@@ -6,7 +6,7 @@ const seedTransactions = [
   {id:5,description:"Support contract renewal",date:"2026-10-29",reference:"QC-CR-2602",type:"credit",amount:50000}
 ];
 const initialBalance = 415055.98;
-const storageKey = "quark-ledger-demo-entries-v1";
+const storageKey = "quark-ledger-entries-v1";
 let transactions = loadEntries();
 const money = n => new Intl.NumberFormat("en-MY",{style:"currency",currency:"MYR"}).format(n);
 const dateLabel = s => new Date(s+"T00:00:00").toLocaleDateString("en-MY",{day:"2-digit",month:"short",year:"numeric"});
@@ -40,7 +40,7 @@ document.querySelector("#typeFilter").addEventListener("change",render);
 document.querySelector("#exportBtn").addEventListener("click",()=>{
   const rows=[["Description","Date","Reference","Type","Amount (MYR)"],...transactions.map(t=>[t.description,t.date,t.reference,t.type,t.amount])];
   const csv=rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
-  const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));const a=document.createElement("a");a.href=url;a.download="quark-computer-demo-ledger.csv";a.click();URL.revokeObjectURL(url);
+  const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));const a=document.createElement("a");a.href=url;a.download="quark-computer-ledger.csv";a.click();URL.revokeObjectURL(url);
 });
 document.querySelector("#year").textContent=new Date().getFullYear();
 render();
