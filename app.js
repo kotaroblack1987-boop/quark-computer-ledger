@@ -25,22 +25,12 @@ function render(){
   document.querySelector("#debitsValue").textContent=money(debits).replace("MYR","RM");
 }
 function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-const dialog=document.querySelector("#entryDialog");
-document.querySelector("#addTransactionBtn").addEventListener("click",()=>{const f=document.querySelector("#entryForm");f.reset();f.elements.date.value=new Date().toISOString().slice(0,10);dialog.showModal();});
-document.querySelector("#closeDialog").addEventListener("click",()=>dialog.close());
-document.querySelector("#cancelDialog").addEventListener("click",()=>dialog.close());
-document.querySelector("#entryForm").addEventListener("submit",e=>{
-  e.preventDefault();const f=e.currentTarget;const data=new FormData(f);const amount=Number(data.get("amount"));
-  if(!Number.isFinite(amount)||amount<=0)return;
-  const type=data.get("type");transactions.push({id:Date.now(),description:data.get("description").trim(),date:data.get("date"),reference:"QC-"+(type==="credit"?"CR":"DR")+"-"+String(Date.now()).slice(-6),type,amount});
-  saveEntries();render();dialog.close();
-});
 document.querySelector("#searchInput").addEventListener("input",render);
 document.querySelector("#typeFilter").addEventListener("change",render);
 document.querySelector("#exportBtn").addEventListener("click",()=>{
   const rows=[["Description","Date","Reference","Type","Amount (MYR)"],...transactions.map(t=>[t.description,t.date,t.reference,t.type,t.amount])];
   const csv=rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
-  const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));const a=document.createElement("a");a.href=url;a.download="quark-computer-demo-ledger.csv";a.click();URL.revokeObjectURL(url);
+  const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));const a=document.createElement("a");a.href=url;a.download="quark-computer-ledger.csv";a.click();URL.revokeObjectURL(url);
 });
 document.querySelector("#year").textContent=new Date().getFullYear();
 render();
