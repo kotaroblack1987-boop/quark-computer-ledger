@@ -6,9 +6,12 @@ const seedTransactions = [
   {id:5,description:"Support contract renewal",date:"2026-10-29",reference:"QC-CR-2602",type:"credit",amount:50000}
 ];
 const initialBalance = 415055.98;
-let transactions = seedTransactions;
+const storageKey = "quark-ledger-entries-v1";
+let transactions = loadEntries();
 const money = n => new Intl.NumberFormat("en-MY",{style:"currency",currency:"MYR"}).format(n);
 const dateLabel = s => new Date(s+"T00:00:00").toLocaleDateString("en-MY",{day:"2-digit",month:"short",year:"numeric"});
+function loadEntries(){try{const saved=localStorage.getItem(storageKey);return saved?JSON.parse(saved):seedTransactions;}catch{return seedTransactions;}}
+function saveEntries(){try{localStorage.setItem(storageKey,JSON.stringify(transactions));}catch{}}
 function render(){
   const query=document.querySelector("#searchInput").value.trim().toLowerCase();
   const filter=document.querySelector("#typeFilter").value;
