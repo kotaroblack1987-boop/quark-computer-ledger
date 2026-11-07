@@ -7,3 +7,6 @@
 
 /* Keep transaction dates clean and prevent weekday text or wrapping in the date column. */
 .activity-panel table th:nth-child(2),.activity-panel table td:nth-child(2){white-space:nowrap;min-width:92px;font-variant-numeric:tabular-nums}
+
+/* Mobile transaction table: keep the full date visible and allow intentional horizontal scrolling. */
+@media(max-width:700px){.activity-panel .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}.activity-panel table{min-width:570px}.activity-panel table th:nth-child(2),.activity-panel table td:nth-child(2){width:104px;min-width:104px;white-space:nowrap}}
