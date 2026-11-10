@@ -14,23 +14,25 @@ const seedTransactions = [
   {id:13,description:"Annual support renewal",date:"2026-09-21",reference:"QC-CR-260921",type:"credit",amount:36000},
   {id:14,description:"Office operations",date:"2026-09-17",reference:"QC-DR-260917",type:"debit",amount:4000},
   {id:15,description:"Workstation supply",date:"2026-09-10",reference:"QC-CR-260910",type:"credit",amount:32000},
-  {id:16,description:"Payment processing fees",date:"2026-09-04",reference:"QC-DR-260904",type:"debit",amount:2253.52}
+  {id:16,description:"Payment processing fees",date:"2026-09-04",reference:"QC-DR-260904",type:"debit",amount:2253.52},
+  {id:17,description:"Pending incoming credit",date:"2026-11-10",reference:"QC-PN-261110",type:"credit",amount:30500,pending:true}
 ];
 const openingBalance = 0;
 const storageKey = "quark-ledger-entries-v2";
 let transactions = loadEntries();
 const money = n => new Intl.NumberFormat("en-MY",{style:"currency",currency:"MYR"}).format(n);
 const dateLabel = s => {const value=String(s).trim();const iso=value.match(/^(\\d{4})-(\\d{2})-(\\d{2})/);if(!iso)return value;const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];return `${iso[3]} ${months[Number(iso[2])-1]} ${iso[1]}`;};
-function loadEntries(){try{const saved=localStorage.getItem(storageKey);return saved?JSON.parse(saved):seedTransactions;}catch{return seedTransactions;}}
+function loadEntries(){try{const saved=localStorage.getItem(storageKey);const entries=saved?JSON.parse(saved):seedTransactions;if(!entries.some(t=>t.reference==="QC-PN-261110"))entries.push({id:Math.max(0,...entries.map(t=>Number(t.id)||0))+1,description:"Pending incoming credit",date:"2026-11-10",reference:"QC-PN-261110",type:"credit",amount:30500,pending:true});return entries;}catch{return seedTransactions;}}
 function render(){
   const query=document.querySelector("#searchInput").value.trim().toLowerCase();
   const filter=document.querySelector("#typeFilter").value;
   const visible=transactions.filter(t=>(filter==="all"||t.type===filter)&&[t.description,t.reference,t.date].some(v=>v.toLowerCase().includes(query))).sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
-  document.querySelector("#transactionRows").innerHTML=visible.map(t=>`<tr><td>${escapeHTML(t.description)}</td><td>${dateLabel(t.date)}</td><td class="ref">${escapeHTML(t.reference)}</td><td><span class="type-tag ${t.type}">${t.type.toUpperCase()}</span></td><td class="amount ${t.type==="credit"?"positive":"negative"}">${t.type==="credit"?"+":"−"}${money(t.amount).replace("MYR","RM")}</td></tr>`).join("");
+  document.querySelector("#transactionRows").innerHTML=visible.map(t=>`<tr><td>${escapeHTML(t.description)}</td><td>${dateLabel(t.date)}</td><td class="ref">${escapeHTML(t.reference)}</td><td><span class="type-tag ${t.type}">${t.type.toUpperCase()}</span>${t.pending?' <span class="pending-tag">PENDING</span>':""}</td><td class="amount ${t.type==="credit"?"positive":"negative"}">${t.type==="credit"?"+":"−"}${money(t.amount).replace("MYR","RM")}</td></tr>`).join("");
   document.querySelector("#emptyState").hidden=visible.length>0;
   document.querySelector("#entryCount").textContent=`Showing ${visible.length} of ${transactions.length} entries`;
-  const credits=transactions.filter(t=>t.type==="credit").reduce((s,t)=>s+t.amount,0);
-  const debits=transactions.filter(t=>t.type==="debit").reduce((s,t)=>s+t.amount,0);
+  const confirmed=transactions.filter(t=>!t.pending);
+  const credits=confirmed.filter(t=>t.type==="credit").reduce((s,t)=>s+t.amount,0);
+  const debits=confirmed.filter(t=>t.type==="debit").reduce((s,t)=>s+t.amount,0);
   const balance=openingBalance+credits-debits;
   const parts=new Intl.NumberFormat("en-MY",{minimumFractionDigits:2,maximumFractionDigits:2}).format(balance).split(".");
   document.querySelector("#balanceWhole").textContent=parts[0];
@@ -43,7 +45,7 @@ function renderSnapshot(credits,debits,balance){
   const fmt=n=>money(n).replace("MYR","RM");
   const months=[["2026-09","Sep"],["2026-10","Oct"],["2026-11","Nov"]];
   const monthly=months.map(([key,label])=>{
-    const entries=transactions.filter(t=>t.date.startsWith(key));
+    const entries=transactions.filter(t=>!t.pending&&t.date.startsWith(key));
     const incoming=entries.filter(t=>t.type==="credit").reduce((s,t)=>s+t.amount,0);
     const outgoing=entries.filter(t=>t.type==="debit").reduce((s,t)=>s+t.amount,0);
     return {label,incoming,outgoing,net:incoming-outgoing,count:entries.length};
@@ -55,8 +57,8 @@ function renderSnapshot(credits,debits,balance){
   document.querySelector("#snapshotCredits").textContent=fmt(credits);
   document.querySelector("#snapshotDebits").textContent=fmt(debits);
   document.querySelector("#snapshotClosing").textContent=fmt(balance);
-  const largestCredit=transactions.filter(t=>t.type==="credit").reduce((a,t)=>!a||t.amount>a.amount?t:a,null);
-  const largestDebit=transactions.filter(t=>t.type==="debit").reduce((a,t)=>!a||t.amount>a.amount?t:a,null);
+  const largestCredit=transactions.filter(t=>!t.pending&&t.type==="credit").reduce((a,t)=>!a||t.amount>a.amount?t:a,null);
+  const largestDebit=transactions.filter(t=>!t.pending&&t.type==="debit").reduce((a,t)=>!a||t.amount>a.amount?t:a,null);
   document.querySelector("#snapshotLargestCredit").textContent=largestCredit?fmt(largestCredit.amount):fmt(0);
   document.querySelector("#snapshotLargestDebit").textContent=largestDebit?fmt(largestDebit.amount):fmt(0);
   document.querySelector("#snapshotBars").innerHTML=monthly.map(m=>`<div class="bar-group"><i class="bar income" style="height:${m.incoming/max*100}%" title="Credits: ${fmt(m.incoming)}"></i><i class="bar expense" style="height:${m.outgoing/max*100}%" title="Debits: ${fmt(m.outgoing)}"></i></div>`).join("");
@@ -67,7 +69,7 @@ function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":
 document.querySelector("#searchInput").addEventListener("input",render);
 document.querySelector("#typeFilter").addEventListener("change",render);
 document.querySelector("#exportBtn").addEventListener("click",()=>{
-  const rows=[["Description","Date","Reference","Type","Amount (MYR)"],...transactions.map(t=>[t.description,t.date,t.reference,t.type,t.amount])];
+  const rows=[["Description","Date","Reference","Type","Status","Amount (MYR)"],...transactions.map(t=>[t.description,t.date,t.reference,t.type,t.pending?"Pending":"Confirmed",t.amount])];
   const csv=rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\\r\\n");
   const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));const a=document.createElement("a");a.href=url;a.download="quark-computer-ledger.csv";a.click();URL.revokeObjectURL(url);
 });
