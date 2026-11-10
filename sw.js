@@ -1,4 +1,4 @@
-const CACHE="quark-ledger-first-v5";
+const CACHE="quark-ledger-first-v6";
 const ASSETS=["./","./index.html","./styles.css","./app.js","./manifest.webmanifest","./icon.svg"];
 
 self.addEventListener("install",event=>{
