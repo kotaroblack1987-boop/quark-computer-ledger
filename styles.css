@@ -26,3 +26,5 @@
 .monthly-row b{font-size:8px;font-weight:600;white-space:nowrap}
 .monthly-credit{color:#699340}.monthly-debit{color:#bd725f}.monthly-net{color:#344158}
 @media(max-width:700px){.snapshot-period strong{font-size:14px}.monthly-head,.monthly-row{grid-template-columns:.8fr 1.2fr 1.2fr 1.1fr;gap:3px}.monthly-row,.monthly-row b{font-size:7px}.snapshot-chart .bar{width:10px}}
+
+.pending-tag{display:inline-block;margin-left:4px;padding:4px 6px;border-radius:4px;background:#fff4dc;color:#a57928;font-size:7px;font-weight:700;letter-spacing:.3px}
